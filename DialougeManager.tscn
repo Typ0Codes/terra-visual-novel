@@ -1,3 +1,73 @@
 [gd_scene format=3 uid="uid://hhrg8qofqngi"]
 
-[node name="Node2D" type="Node2D" unique_id=458028754]
+[ext_resource type="Texture2D" uid="uid://dptqklslgy52b" path="res://Lily.webp" id="1_hvmc1"]
+[ext_resource type="Script" uid="uid://dhllrs08i6kl" path="res://dialouge_manager.gd" id="1_qepf8"]
+[ext_resource type="Theme" uid="uid://d34nmxw0w2qd" path="res://DefaultTheme.tres" id="2_hvmc1"]
+[ext_resource type="AudioStream" uid="uid://c3ia0wlwjltob" path="res://Talk.wav" id="4_3sroy"]
+[ext_resource type="Script" uid="uid://bkaql5boxqb44" path="res://Misgenderohno.gd" id="4_rlnfl"]
+
+[sub_resource type="RichTextEffect" id="RichTextEffect_3sroy"]
+script = ExtResource("4_rlnfl")
+metadata/_custom_type_script = "uid://bkaql5boxqb44"
+
+[sub_resource type="AudioStreamRandomizer" id="AudioStreamRandomizer_qepf8"]
+random_pitch = 1.7817973
+streams_count = 1
+stream_0/stream = ExtResource("4_3sroy")
+
+[node name="Dialouge Manager" type="Node2D" unique_id=458028754 node_paths=PackedStringArray("Speaker")]
+script = ExtResource("1_qepf8")
+Dialouge = Array[String](["This Is Example Text", "This is also Example Text", "this is a longer bit of example text waow waow", "based based based based", "uhhh my name is lily and i am transgernder waow waow waow", "i am now [color=green]green[/color] for an amazing reason", "oh no im so [shake rate=20.0 level=5]fucking cold[/shake]", "except i like being cold cuz im a freak ooooo ", "wuh oh your a [misgender]man[/misgender]"])
+Speaker = NodePath("PanelContainer/GridContainer/VBoxContainer/Speaker")
+
+[node name="PanelContainer" type="PanelContainer" parent="." unique_id=604077868]
+offset_top = 410.0
+offset_right = 1152.0
+offset_bottom = 665.0
+
+[node name="GridContainer" type="HBoxContainer" parent="PanelContainer" unique_id=1661694692]
+layout_mode = 2
+
+[node name="TextureRect" type="TextureRect" parent="PanelContainer/GridContainer" unique_id=834879068]
+custom_maximum_size = Vector2(150, 150)
+layout_mode = 2
+size_flags_vertical = 0
+offset_transform_scale = Vector2(4.04, 4.04)
+offset_transform_visual_only = false
+texture = ExtResource("1_hvmc1")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="PanelContainer/GridContainer" unique_id=2115929064]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Speaker" type="RichTextLabel" parent="PanelContainer/GridContainer/VBoxContainer" unique_id=1713140053]
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 2
+size_flags_stretch_ratio = 0.1
+offset_transform_position_ratio = Vector2(0.01, 0.735)
+offset_transform_visual_only = false
+bbcode_enabled = true
+text = "Lily"
+fit_content = true
+autowrap_mode = 0
+
+[node name="Dialouge" type="RichTextLabel" parent="PanelContainer/GridContainer/VBoxContainer" unique_id=1533507439]
+layout_mode = 2
+size_flags_vertical = 3
+offset_transform_visual_only = false
+theme = ExtResource("2_hvmc1")
+bbcode_enabled = true
+text = "sample text"
+fit_content = true
+autowrap_mode = 2
+custom_effects = [SubResource("RichTextEffect_3sroy")]
+
+[node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="." unique_id=299817948]
+stream = SubResource("AudioStreamRandomizer_qepf8")
+max_polyphony = 3
+
+[node name="Spoons" type="Label" parent="." unique_id=538932134]
+offset_right = 40.0
+offset_bottom = 23.0
+text = "5/5"

@@ -1,0 +1,6 @@
+[gd_resource type="Theme" format=3 uid="uid://d34nmxw0w2qd"]
+
+[ext_resource type="FontFile" uid="uid://c4vgcepc0rhgb" path="res://12Riks-Normal.otf" id="1_ihngy"]
+
+[resource]
+default_font = ExtResource("1_ihngy")
