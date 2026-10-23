@@ -5,6 +5,13 @@
 [ext_resource type="Texture2D" uid="uid://bg2ypj3idyevg" path="res://Overlooking Porthmeor (Makin Bacon).png" id="1_ykvvg"]
 [ext_resource type="Shader" uid="uid://cgpbekhcs3afs" path="res://EarthBound.gdshader" id="2_2rfw7"]
 [ext_resource type="Shader" uid="uid://8g0ix82lntg1" path="res://PS2.gdshader" id="3_bwqk1"]
+[ext_resource type="Shader" uid="uid://cx70xs0xndu50" path="res://Mask.gdshader" id="4_7r35v"]
+[ext_resource type="Texture2D" uid="uid://wg5056b7pvl8" path="res://TalkSprites.png" id="5_7r35v"]
+[ext_resource type="Script" uid="uid://b7lk2h1v7x7s" path="res://talk_sprite.gd" id="6_1h1pd"]
+[ext_resource type="Script" uid="uid://bqoipkjny7xl3" path="res://DialogueCharacter.gd" id="8_hhusy"]
+[ext_resource type="Resource" uid="uid://btu6eumexup4m" path="res://Charachters/Lily.tres" id="9_m2u0h"]
+[ext_resource type="Resource" uid="uid://bflg5epbckoc0" path="res://Charachters/Typ0.tres" id="10_m2u0h"]
+[ext_resource type="Resource" uid="uid://cye0mdfgq56fh" path="res://Charachters/T.tres" id="11_s2tqv"]
 
 [sub_resource type="Gradient" id="Gradient_7r35v"]
 colors = PackedColorArray(0, 0, 0, 1, 1, 0, 0, 1)
@@ -31,6 +38,81 @@ shader_parameter/scroll_direction = Vector2(0, 0)
 shader_parameter/scrolling_speed = 0.08
 shader_parameter/enable_palette_cycling = true
 shader_parameter/palette = SubResource("NoiseTexture2D_fp5cc")
+shader_parameter/palette_speed = 0.1
+
+[sub_resource type="ViewportTexture" id="ViewportTexture_vrkw4"]
+viewport_path = NodePath("TalkSprite/SubViewport")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_7r35v"]
+resource_local_to_scene = true
+shader = ExtResource("4_7r35v")
+shader_parameter/image_texture = SubResource("ViewportTexture_vrkw4")
+shader_parameter/mask_color = Color(0, 1, 0, 1)
+shader_parameter/tolerance = 0.3
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_7r35v"]
+atlas = ExtResource("5_7r35v")
+region = Rect2(1152, 0, 1152, 648)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_x4i3u"]
+atlas = ExtResource("5_7r35v")
+region = Rect2(2304, 0, 1152, 648)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_1h1pd"]
+atlas = ExtResource("5_7r35v")
+region = Rect2(0, 0, 1152, 648)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_m8aff"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_7r35v")
+}],
+"loop": 1,
+"name": &"Default",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_x4i3u")
+}],
+"loop": 1,
+"name": &"Sad",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_1h1pd")
+}],
+"loop": 1,
+"name": &"Sit",
+"speed": 5.0
+}]
+
+[sub_resource type="Gradient" id="Gradient_1h1pd"]
+colors = PackedColorArray(0, 0, 0, 1, 0.99999994, 0.29426056, 0.74813074, 1)
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_vrkw4"]
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_x4i3u"]
+noise = SubResource("FastNoiseLite_vrkw4")
+color_ramp = SubResource("Gradient_1h1pd")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_1h1pd"]
+shader = ExtResource("2_2rfw7")
+shader_parameter/effect_enabled = true
+shader_parameter/enable_interlace = true
+shader_parameter/screen_height = 640.0
+shader_parameter/amplitude = 0.075
+shader_parameter/frequency = 10.0
+shader_parameter/speed = 0.185
+shader_parameter/amplitude_vertical = 0.0
+shader_parameter/frequency_vertical = 0.0
+shader_parameter/speed_vertical = 0.0
+shader_parameter/scroll_direction = Vector2(0, 0)
+shader_parameter/scrolling_speed = 0.08
+shader_parameter/enable_palette_cycling = true
+shader_parameter/palette = SubResource("NoiseTexture2D_x4i3u")
 shader_parameter/palette_speed = 0.1
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_ykvvg"]
@@ -72,9 +154,37 @@ position = Vector2(577.5, 321)
 scale = Vector2(0.20570728, 0.18907565)
 texture = ExtResource("1_ykvvg")
 
+[node name="TalkSprite" type="AnimatedSprite2D" parent="." unique_id=263670654]
+material = SubResource("ShaderMaterial_7r35v")
+sprite_frames = SubResource("SpriteFrames_m8aff")
+animation = &"Sad"
+centered = false
+script = ExtResource("6_1h1pd")
+palette_noise = SubResource("NoiseTexture2D_x4i3u")
+
+[node name="SubViewport" type="SubViewport" parent="TalkSprite" unique_id=1989815212]
+size = Vector2i(1152, 648)
+
+[node name="ColorRect2" type="ColorRect" parent="TalkSprite/SubViewport" unique_id=2141938140]
+offset_right = 1159.0
+offset_bottom = 668.0
+color = Color(0, 0, 0, 1)
+
+[node name="Sprite2D" type="Sprite2D" parent="TalkSprite/SubViewport" unique_id=1409515424]
+material = SubResource("ShaderMaterial_1h1pd")
+position = Vector2(585.00006, 338.00003)
+scale = Vector2(0.2090336, 0.16059758)
+texture = ExtResource("1_ykvvg")
+
+[node name="DialogueManager" parent="." unique_id=458028754 instance=ExtResource("1_pvqqe")]
+dialogue_path = "res://example.txt"
+Characters = Array[ExtResource("8_hhusy")]([ExtResource("9_m2u0h"), ExtResource("10_m2u0h"), ExtResource("11_s2tqv")])
+
 [node name="ColorRect" type="ColorRect" parent="." unique_id=989377327]
 material = SubResource("ShaderMaterial_ykvvg")
 offset_right = 1159.0
 offset_bottom = 668.0
+mouse_filter = 2
 
-[node name="Node2D" parent="." unique_id=458028754 instance=ExtResource("1_pvqqe")]
+[node name="Camera2D" type="Camera2D" parent="." unique_id=1726883717]
+anchor_mode = 0

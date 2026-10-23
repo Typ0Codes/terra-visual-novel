@@ -15,6 +15,7 @@ uniform bool enable_palette_cycling = false;
 uniform sampler2D palette;
 uniform float palette_speed = 0.1;
 
+
 void fragment()
 {
 	if (effect_enabled)
@@ -28,6 +29,7 @@ void fragment()
 		if (enable_palette_cycling)
 		{
 			COLOR = vec4(texture(palette, vec2(palette_swap, 0)).rgb, tex.a);
+			
 		}
 		else
 		{

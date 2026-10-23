@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://dptqklslgy52b"
-path="res://.godot/imported/Lily.webp-9532252827ca7bd0822fca2a236d3a53.ctex"
+uid="uid://b2rjlfqw0wnm0"
+path="res://.godot/imported/Fushimi Inari-taisha.png-cea1411f6e83e8f1d12ef9cc7343d618.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Lily.webp"
-dest_files=["res://.godot/imported/Lily.webp-9532252827ca7bd0822fca2a236d3a53.ctex"]
+source_file="res://Typ0's Photo Libarary /Typ0's Shots/Fushimi Inari-taisha.png"
+dest_files=["res://.godot/imported/Fushimi Inari-taisha.png-cea1411f6e83e8f1d12ef9cc7343d618.ctex"]
 
 [params]
 

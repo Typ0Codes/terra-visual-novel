@@ -1,0 +1,33 @@
+[gd_resource type="Resource" script_class="DialogueCharacter" format=3 uid="uid://bflg5epbckoc0"]
+
+[ext_resource type="Script" uid="uid://bqoipkjny7xl3" path="res://DialogueCharacter.gd" id="1_wvobg"]
+[ext_resource type="AudioStream" uid="uid://c3ia0wlwjltob" path="res://Talk.wav" id="2_melfx"]
+
+[sub_resource type="Gradient" id="Gradient_5g4e4"]
+colors = PackedColorArray(0, 0, 0, 1, 0.6031149, 0.0020636541, 0.8179156, 1)
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_kjs5v"]
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_sfodi"]
+noise = SubResource("FastNoiseLite_kjs5v")
+color_ramp = SubResource("Gradient_5g4e4")
+
+[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_wvobg"]
+load_path = "res://.godot/imported/PFPs.png-707a72c0d93c32f7eca108356fc0976a.ctex"
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_melfx"]
+atlas = SubResource("CompressedTexture2D_wvobg")
+region = Rect2(0, 0, 160, 0)
+
+[sub_resource type="AudioStreamRandomizer" id="AudioStreamRandomizer_sfodi"]
+random_pitch = 1.0370605
+streams_count = 1
+stream_0/stream = ExtResource("2_melfx")
+
+[resource]
+script = ExtResource("1_wvobg")
+character_name = "Soren"
+palette_noise = SubResource("NoiseTexture2D_sfodi")
+portrait = SubResource("AtlasTexture_melfx")
+talk_sound = SubResource("AudioStreamRandomizer_sfodi")
+metadata/_custom_type_script = "uid://bqoipkjny7xl3"

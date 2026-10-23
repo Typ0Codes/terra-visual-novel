@@ -1,0 +1,19 @@
+~ start
+ivy: What do you say?
+- TEST 1 => 1
+- TEST 2 => 2
+
+~ 1
+ivy: Test 1
+=> join
+
+~ 2
+ivy: 2
+=> join
+
+~ join
+ivy: Rejoined
+- Leave => continue1
+
+~ continue1
+	[loadscene=res://NewDay.tscn]
