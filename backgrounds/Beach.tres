@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="Background" format=3 uid="uid://d0h5fmsh0qy2c"]
+
+[ext_resource type="Texture2D" uid="uid://bg2ypj3idyevg" path="res://Overlooking Porthmeor (Makin Bacon).png" id="1_m4v6k"]
+[ext_resource type="Script" uid="uid://b37hsta5tv701" path="res://backgrounds/background.gd" id="1_wnwmu"]
+
+[resource]
+script = ExtResource("1_wnwmu")
+background_name = "Beach"
+background_path = ExtResource("1_m4v6k")
+metadata/_custom_type_script = "uid://b37hsta5tv701"

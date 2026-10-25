@@ -3,10 +3,15 @@ extends Node2D
 signal speaker_changed(character: DialogueCharacter)
 signal dialogue_finished
 
-@export_file("*.txt") var dialogue_path: String
+@export_file("*.dlg") var dialogue_path: String
 @export var start_node := ""
 @export var Speaker: RichTextLabel
 @export var Characters: Array[DialogueCharacter] = []
+@export var Backgrounds: Array[Background] = []
+
+@export var Background_Node: Sprite2D
+
+@export var portrait_node: AnimatedSprite2D
 
 @onready var TextBox: RichTextLabel = $PanelContainer/GridContainer/VBoxContainer/Dialouge
 @onready var AudioPlayer = $AudioStreamPlayer
@@ -40,20 +45,27 @@ var ChoiceBox: VBoxContainer
 
 
 var character_lookup := {}
+var bg_lookup := {}
 var portrait_cache := {}
+var bg_cache := {}
 var current_speaker: DialogueCharacter = null
+var current_background: Background = null
 
 
 var tag_handlers := {}
 var triggers: Array[Dictionary] = []
 var tag_regex := RegEx.new()
 
+var substitutions := {}
+
 
 func _ready() -> void:
 	tag_regex.compile("\\[(/?)([A-Za-z_]\\w*)(?:=([^\\]]*))?\\]")
 	TextBox.bbcode_enabled = true
 	_build_characters()
+	_build_Bgs()              
 	_register_default_tags()
+
 
 	ChoiceBox = VBoxContainer.new()
 	ChoiceBox.visible = false
@@ -67,6 +79,9 @@ func _ready() -> void:
 		push_warning("Dialogue file has no blocks: " + dialogue_path)
 		return
 	_go_to(start_node if start_node != "" else first_node)
+	
+	_register_default_tags()
+	_register_default_substitutions()
 
 
 
@@ -105,6 +120,24 @@ func load_script(path: String) -> void:
 
 		if s.begins_with("=>"):
 			nodes[current]["goto"] = s.substr(2).strip_edges()
+			continue
+			
+				
+		if s.begins_with("[if "):
+			var close := s.find("]")
+			var arrow := s.find("=>", close)
+			if close == -1 or arrow == -1:
+				push_warning("Bad if on line %d (needs '[if var value] => target')" % line_no)
+				continue
+			var cond := _parse_condition(s.substr(4, close - 4).strip_edges())
+			if cond.is_empty():
+				push_warning("Bad condition on line %d" % line_no)
+				continue
+			nodes[current]["lines"].append({
+				"cond": cond,
+				"target": s.substr(arrow + 2).strip_edges(),
+			})
+			last_line = {}   
 			continue
 
 
@@ -145,7 +178,12 @@ func _register_default_tags() -> void:
 	register_tag("restore",   _tag_restore)
 	register_tag("misgender", _tag_misgender)
 	register_tag("example",   _tag_example)
-	register_tag("loadscene",   _tag_load_scene)
+	register_tag("loadscene", _tag_load_scene)
+	register_tag("bg",        _tag_bg, Callable(), true)
+	register_tag("portrait",  _tag_portrait, Callable(), true)
+	register_tag("telltale",  _tag_telltale_they_will_remember_that, Callable(), true)
+	register_tag("titlecard", _tag_titlecard)
+
 
 func _tag_speaker(arg: String, _ctx: Dictionary) -> void:
 	var key := arg.strip_edges().to_lower()
@@ -157,6 +195,46 @@ func _tag_speaker(arg: String, _ctx: Dictionary) -> void:
 func _tag_load_scene(arg: String, _ctx: Dictionary) -> void:
 	var scene_path := arg.strip_edges()
 	get_tree().change_scene_to_file(scene_path)
+	
+func _tag_titlecard(arg: String, _ctx: Dictionary) -> void:
+	var text := arg.strip_edges()
+	$Titlecard.text = text
+	$Titlecard.visible = true
+	await get_tree().create_timer(1).timeout
+	$Titlecard.visible = false  
+	
+func _tag_telltale_they_will_remember_that(arg: String, _ctx: Dictionary) -> void:
+	var parts := arg.split(",", true, 1)
+	if parts.size() < 2:
+		push_warning("set tag needs 'variable,value': " + arg)
+		return
+
+	var variable := parts[0].strip_edges()   
+	var raw_value := parts[1].strip_edges()
+
+	if not variable in Globals:
+		push_warning("Globals has no variable: " + variable)
+		return
+
+	Globals.set(variable, _parse_value(raw_value))
+
+func _parse_value(raw: String) -> Variant:
+	var v = str_to_var(raw)   
+	if v == null and raw != "null":
+		return raw
+	return v
+	
+func _tag_portrait(arg: String, _ctx: Dictionary) -> void:
+	var portraitname := arg.strip_edges().to_lower()
+	portrait_node.animation = portraitname
+	
+func _tag_bg(arg: String, _ctx: Dictionary) -> void:
+	var key := arg.strip_edges().to_lower()
+	if not bg_lookup.has(key):
+		push_warning("Unknown background: " + key)
+		return
+	_set_bg(bg_lookup[key], key)
+	
 
 func _tag_restore(arg: String, _ctx: Dictionary) -> void:
 	Globals.restore(arg.to_int() if arg != "" else 1)
@@ -187,6 +265,13 @@ func _parse_line(raw: String) -> String:
 		out += between
 		visible += between.length()
 		last = m.get_end()
+		
+		if substitutions.has(tag):
+			if not is_close:
+				var value: String = substitutions[tag].call(arg)
+				out += value.replace("[", "[lb]")   
+				visible += value.length()
+			continue
 
 		if not tag_handlers.has(tag):
 			out += m.get_string()
@@ -273,13 +358,13 @@ func _go_to(target: String) -> void:
 		return
 	current_node = target
 	line_idx = 0
-	_show_line()
+	_enter_line()          
 
 func _advance() -> void:
 	var node: Dictionary = nodes[current_node]
 	if line_idx + 1 < node["lines"].size():
 		line_idx += 1
-		_show_line()
+		_enter_line()     
 	elif node["goto"] != "":
 		_go_to(node["goto"])
 	else:
@@ -349,7 +434,21 @@ func _on_choice_picked(target: String) -> void:
 	ChoiceBox.visible = false
 	TextBox.visible = true
 	input_cooldown = LINE_START_DELAY
-	_go_to(target)
+
+	var remaining := target
+	for m in tag_regex.search_all(target):
+		var tag := m.get_string(2).to_lower()
+		if tag_handlers.has(tag):
+			var arg := m.get_string(3)
+			var ctx := {"name": tag, "arg": arg, "text_start": 0, "text_end": -1}
+			tag_handlers[tag]["on_open"].call(arg, ctx)
+		remaining = remaining.replace(m.get_string(), "")
+	remaining = remaining.strip_edges()
+
+	if remaining == "":
+		_advance()          
+	else:
+		_go_to(remaining)
 
 
 
@@ -401,13 +500,35 @@ func _build_characters() -> void:
 		var key := c.character_name.to_lower()
 		character_lookup[key] = c
 		if c.portrait:
-			portrait_cache[key] = _make_portrait(c.portrait)
+			portrait_cache[key] = _make_portrait(c.portrait, key)
+			
+func _build_Bgs() -> void:
+	for c in Backgrounds:
+		if c == null:
+			continue
+		var key := c.background_name.to_lower()   
+		bg_lookup[key] = c
+		if c.background_path:
+			bg_cache[key] = _make_background(c.background_path, key)
 
-func _make_portrait(tex: Texture2D) -> ImageTexture:
+func _make_portrait(tex: Texture2D, who := "") -> Texture2D:
 	var img := tex.get_image()
+	if img == null:
+		push_warning("Can't read portrait image for '%s' (%s), using it unresized" % [who, tex])
+		return tex
 	if img.is_compressed():
 		img.decompress()
 	img.resize(PORTRAIT_SIZE, PORTRAIT_SIZE, Image.INTERPOLATE_LANCZOS)
+	return ImageTexture.create_from_image(img)
+
+func _make_background(tex: Texture2D, who := "") -> Texture2D:
+	var img := tex.get_image()
+	if img == null:
+		push_warning("Can't read background image for '%s' (%s), using it unresized" % [who, tex])
+		return tex
+	if img.is_compressed():
+		img.decompress()
+	img.resize(1152, 648, Image.INTERPOLATE_LANCZOS)
 	return ImageTexture.create_from_image(img)
 
 func _set_speaker(c: DialogueCharacter, key: String) -> void:
@@ -418,7 +539,89 @@ func _set_speaker(c: DialogueCharacter, key: String) -> void:
 			AudioPlayer.stream = c.talk_sound
 	Portrait.texture = portrait_cache.get(key, null)
 	speaker_changed.emit(c)
+	
+func _set_bg(c: Background, key: String) -> void:
+	current_background = c
+	if Background_Node:
+		Background_Node.texture = bg_cache.get(key, null)  
 
 func refresh_speaker() -> void:
 	if current_speaker:
 		speaker_changed.emit(current_speaker)
+		
+const CONDITION_OPS := ["==", "!=", "<=", ">=", "<", ">"]
+
+func _parse_condition(s: String) -> Dictionary:
+	var parts := s.split(" ", false)
+	if parts.is_empty():
+		return {}
+	var cond := {"var": parts[0], "op": "truthy", "value": null}
+	if parts.size() == 1:
+		return cond                   
+
+	var op := "=="
+	var value_parts := parts.slice(1)
+	if value_parts[0] in CONDITION_OPS:
+		op = value_parts[0]
+		value_parts = value_parts.slice(1)
+	if value_parts.is_empty():
+		return {}
+	cond["op"] = op
+	cond["value"] = _parse_value(" ".join(value_parts))
+	return cond
+
+func _eval_condition(cond: Dictionary) -> bool:
+	var var_name: String = cond["var"]
+	if not var_name in Globals:
+		push_warning("Globals has no variable: " + var_name)
+		return false
+	var current = Globals.get(var_name)
+	var expected = cond["value"]
+	match cond["op"]:
+		"truthy": return bool(current)
+		"==": return current == expected
+		"!=": return current != expected
+		"<":  return current < expected
+		">":  return current > expected
+		"<=": return current <= expected
+		">=": return current >= expected
+	return false
+
+
+func _enter_line() -> void:
+	while true:
+		var node: Dictionary = nodes[current_node]
+		if line_idx >= node["lines"].size():
+			
+			if node["goto"] != "":
+				_go_to(node["goto"])
+			else:
+				dialogue_finished.emit()
+			return
+		var entry: Dictionary = node["lines"][line_idx]
+		if not entry.has("cond"):
+			_show_line()
+			return
+		if _eval_condition(entry["cond"]):
+			_go_to(entry["target"])
+			return
+		line_idx += 1
+
+func register_substitution(tag_name: String, getter: Callable) -> void:
+	substitutions[tag_name.to_lower()] = getter
+
+func _register_default_substitutions() -> void:
+	register_substitution("playername", _sub_player_name)
+	register_substitution("var", _sub_global)
+
+func _sub_player_name(_arg: String) -> String:
+	return _global_as_string("player_name")   
+
+func _sub_global(arg: String) -> String:
+	return _global_as_string(arg.strip_edges())
+
+func _global_as_string(variable: String) -> String:
+	if not variable in Globals:
+		push_warning("Globals has no variable: " + variable)
+		return ""
+	return str(Globals.get(variable))

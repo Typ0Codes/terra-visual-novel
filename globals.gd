@@ -9,6 +9,10 @@ var day = 1
 
 var week = 1
 
+var telltaletest = false
+
+var player_name = "PLAYER NAME NOT SET OH GOD"
+
 func restore(amount: int = 1) -> void:
 	spoons = min(spoons + amount, MAX_SPOONS)
 

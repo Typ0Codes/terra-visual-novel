@@ -1,0 +1,25 @@
+[gd_resource type="Resource" script_class="DialogueCharacter" format=3 uid="uid://b1gr7rmlvy7i2"]
+
+[ext_resource type="Script" uid="uid://bqoipkjny7xl3" path="res://Charachters/DialogueCharacter.gd" id="2_gurcb"]
+
+[sub_resource type="Gradient" id="Gradient_yv4uy"]
+colors = PackedColorArray(0, 0, 0, 1, 0.17, 0.17, 0.17, 1)
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_eqkw5"]
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_smshr"]
+noise = SubResource("FastNoiseLite_eqkw5")
+color_ramp = SubResource("Gradient_yv4uy")
+
+[sub_resource type="Gradient" id="Gradient_ov6tq"]
+colors = PackedColorArray(0, 0, 0, 1, 0, 0, 0, 1)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_7ulv3"]
+gradient = SubResource("Gradient_ov6tq")
+
+[resource]
+script = ExtResource("2_gurcb")
+character_name = "???"
+palette_noise = SubResource("NoiseTexture2D_smshr")
+portrait = SubResource("GradientTexture1D_7ulv3")
+metadata/_custom_type_script = "uid://bqoipkjny7xl3"

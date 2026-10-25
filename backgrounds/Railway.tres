@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="Background" format=3 uid="uid://b731vf0h2yfdy"]
+
+[ext_resource type="Script" uid="uid://b37hsta5tv701" path="res://backgrounds/background.gd" id="1_d5fft"]
+[ext_resource type="Texture2D" uid="uid://ma7uk5biteq7" path="res://Typ0's Photo Libarary /Typ0's Shots/Ogden Utah Frontrunner Station.jpg" id="1_rfbrn"]
+
+[resource]
+script = ExtResource("1_d5fft")
+background_name = "Railway"
+background_path = ExtResource("1_rfbrn")
+metadata/_custom_type_script = "uid://b37hsta5tv701"

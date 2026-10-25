@@ -1,0 +1,47 @@
+~ start 
+???: ... [portrait=none]
+???: ...
+???: ...
+???: wake up
+???: ...
+???: ...
+???: wake up
+???: Hey
+???: [misgender]Dude[/misgender]... [restore=1]
+???: wake up 
+???: come on [misgender]man[/misgender]... [restore=1]
+???: wake up
+ben: Hey! [playername]! Wake up! [portrait=default]
+ben: [playername]! whats wrong with you? come on!
+- * huh uh what?
+- * urgh... piss off...
+ben: ok up we get, come on we cant be late!
+- * ok ok i'm up... just give me a sec...
+- * ...ugh... what time is it?
+ben: hurry up [playername]! we've got to hurry!
+narrator: * Suddenly, the sky darkens and seems to twist and contort [portrait=none]
+???: Good morning [portrait=sad]
+???: welcome to week one.
+???: lets get straight into this. you have alot to learn and i dont have much time to teach you.
+???: you see those spoons in the top left?
+???: each spoon represents your energy. certain actions will cost spoons, and if you run out of spoons the day will end.
+???: there are various actions you can take to regain spoons.
+???: Days are short so every desicion counts. 
+???: your goal is to make it through the week.
+???: thats it. 
+???: should be fairly simple, right?
+narrator: * the sky returns to normal and the sun shines down on you
+???: [titlecard=School]
+ben: [playername]! hurry up! we gotta get to class! [portrait=default]
+???: Welcome to class! [portrait=default]
+???: Lets get ready to learn!
+narrator: * you zone out as the teacher begins to talk.
+ben: hey! [playername]! wanna work on the project together?
+- * sure! sounds fun! => 
+- * nah, i think ill work alone.
+
+~ teamup
+    ben: thanks [playername] lets get to work!
+
+~ alone
+    ben: oh ok. well good luck!

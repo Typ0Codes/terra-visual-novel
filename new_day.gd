@@ -8,7 +8,8 @@ func _ready() -> void:
 	if Globals.day == 7:
 		Globals.day = 1
 		Globals.week += 1
-	await get_tree().create_timer(2.5).timeout   
+	await get_tree().create_timer(3.5).timeout  
+	print("over") 
 	
 
 

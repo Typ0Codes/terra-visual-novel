@@ -1,0 +1,212 @@
+[gd_scene format=3 uid="uid://daeeiii8e78he"]
+
+[ext_resource type="Script" uid="uid://becnnbiur75i0" path="res://test_scene.gd" id="1_vaphr"]
+[ext_resource type="Shader" uid="uid://cgpbekhcs3afs" path="res://EarthBound.gdshader" id="2_ntgsm"]
+[ext_resource type="Texture2D" uid="uid://bg2ypj3idyevg" path="res://Overlooking Porthmeor (Makin Bacon).png" id="3_tu16r"]
+[ext_resource type="Shader" uid="uid://cx70xs0xndu50" path="res://Mask.gdshader" id="4_1ng0l"]
+[ext_resource type="Texture2D" uid="uid://wg5056b7pvl8" path="res://TalkSprites.png" id="5_fsd12"]
+[ext_resource type="Texture2D" uid="uid://cs3kg1rvmldyo" path="res://TalkSpritesNoOutline.png" id="6_1f84b"]
+[ext_resource type="Script" uid="uid://b7lk2h1v7x7s" path="res://talk_sprite.gd" id="6_eqpcq"]
+[ext_resource type="PackedScene" uid="uid://hhrg8qofqngi" path="res://DialougeManager.tscn" id="7_goc8q"]
+[ext_resource type="Script" uid="uid://bqoipkjny7xl3" path="res://Charachters/DialogueCharacter.gd" id="8_8oygj"]
+[ext_resource type="Resource" uid="uid://btu6eumexup4m" path="res://Charachters/Lily.tres" id="9_nbr5y"]
+[ext_resource type="Resource" uid="uid://bflg5epbckoc0" path="res://Charachters/Typ0.tres" id="10_4gvio"]
+[ext_resource type="Resource" uid="uid://cye0mdfgq56fh" path="res://Charachters/T.tres" id="11_c7wjt"]
+[ext_resource type="Script" uid="uid://b37hsta5tv701" path="res://backgrounds/background.gd" id="12_u01ec"]
+[ext_resource type="Resource" uid="uid://b1gr7rmlvy7i2" path="res://Charachters/Unknown.tres" id="13_oyrc6"]
+[ext_resource type="Resource" uid="uid://d0h5fmsh0qy2c" path="res://backgrounds/Beach.tres" id="13_xnfdn"]
+[ext_resource type="Resource" uid="uid://dnfoso5anhys6" path="res://Charachters/will.tres" id="14_2hkji"]
+[ext_resource type="Resource" uid="uid://b731vf0h2yfdy" path="res://backgrounds/Railway.tres" id="14_ibcgp"]
+[ext_resource type="Shader" uid="uid://8g0ix82lntg1" path="res://PS2.gdshader" id="15_qjwcg"]
+[ext_resource type="Resource" uid="uid://c0851qc8awuby" path="res://Charachters/You.tres" id="15_saswf"]
+
+[sub_resource type="Gradient" id="Gradient_7r35v"]
+colors = PackedColorArray(0, 0, 0, 1, 1, 0, 0, 1)
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_82ouy"]
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_fp5cc"]
+noise = SubResource("FastNoiseLite_82ouy")
+color_ramp = SubResource("Gradient_7r35v")
+seamless = true
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_bwqk1"]
+shader = ExtResource("2_ntgsm")
+shader_parameter/effect_enabled = false
+shader_parameter/enable_interlace = true
+shader_parameter/screen_height = 648.0
+shader_parameter/amplitude = 0.075
+shader_parameter/frequency = 10.0
+shader_parameter/speed = 2.0
+shader_parameter/amplitude_vertical = 0.0
+shader_parameter/frequency_vertical = 0.0
+shader_parameter/speed_vertical = 0.0
+shader_parameter/scroll_direction = Vector2(0, 0)
+shader_parameter/scrolling_speed = 0.08
+shader_parameter/enable_palette_cycling = true
+shader_parameter/palette = SubResource("NoiseTexture2D_fp5cc")
+shader_parameter/palette_speed = 0.1
+
+[sub_resource type="ViewportTexture" id="ViewportTexture_vrkw4"]
+viewport_path = NodePath("TalkSprite/SubViewport")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_7r35v"]
+resource_local_to_scene = true
+shader = ExtResource("4_1ng0l")
+shader_parameter/image_texture = SubResource("ViewportTexture_vrkw4")
+shader_parameter/mask_color = Color(0, 1, 0, 1)
+shader_parameter/tolerance = 0.3
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_7r35v"]
+atlas = ExtResource("5_fsd12")
+region = Rect2(1152, 0, 1152, 648)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_oyrc6"]
+atlas = ExtResource("6_1f84b")
+region = Rect2(27, 9, 1, 1)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_x4i3u"]
+atlas = ExtResource("5_fsd12")
+region = Rect2(2304, 0, 1152, 648)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_1h1pd"]
+atlas = ExtResource("5_fsd12")
+region = Rect2(0, 0, 1152, 648)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_m8aff"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_7r35v")
+}],
+"loop": 1,
+"name": &"default",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_oyrc6")
+}],
+"loop": 1,
+"name": &"none",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_x4i3u")
+}],
+"loop": 1,
+"name": &"sad",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_1h1pd")
+}],
+"loop": 1,
+"name": &"sit",
+"speed": 5.0
+}]
+
+[sub_resource type="Gradient" id="Gradient_1h1pd"]
+colors = PackedColorArray(0, 0, 0, 1, 0.3, 0.3, 0.3, 1)
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_vrkw4"]
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_x4i3u"]
+noise = SubResource("FastNoiseLite_vrkw4")
+color_ramp = SubResource("Gradient_1h1pd")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_1h1pd"]
+shader = ExtResource("2_ntgsm")
+shader_parameter/effect_enabled = true
+shader_parameter/enable_interlace = true
+shader_parameter/screen_height = 640.0
+shader_parameter/amplitude = 0.075
+shader_parameter/frequency = 10.0
+shader_parameter/speed = 0.185
+shader_parameter/amplitude_vertical = 0.0
+shader_parameter/frequency_vertical = 0.0
+shader_parameter/speed_vertical = 0.0
+shader_parameter/scroll_direction = Vector2(0, 0)
+shader_parameter/scrolling_speed = 0.08
+shader_parameter/enable_palette_cycling = true
+shader_parameter/palette = SubResource("NoiseTexture2D_x4i3u")
+shader_parameter/palette_speed = 0.1
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_ykvvg"]
+shader = ExtResource("15_qjwcg")
+shader_parameter/resolution_x = 320
+shader_parameter/resolution_y = 240
+shader_parameter/color_bit_depth = 4
+shader_parameter/dither_strength = 0.03
+shader_parameter/jitter_amount = 0.008
+shader_parameter/jitter_speed = 1.2
+shader_parameter/jitter_frequency = 180.0
+shader_parameter/chromatic_aberration_strength = 0.015
+shader_parameter/vignette_strength = 0.8
+shader_parameter/vignette_radius = 0.9
+shader_parameter/monitor_pos = Vector2(0.5, 0.5)
+shader_parameter/monitor_size = Vector2(0, 0)
+shader_parameter/zoomed_in = false
+
+[node name="Node2D" type="Node2D" unique_id=942979829]
+script = ExtResource("1_vaphr")
+
+[node name="SubViewportContainer" type="SubViewportContainer" parent="." unique_id=1573621901]
+offset_right = 1163.0
+offset_bottom = 662.0
+
+[node name="SubViewport" type="SubViewport" parent="SubViewportContainer" unique_id=132549110]
+handle_input_locally = false
+size = Vector2i(1152, 648)
+render_target_update_mode = 4
+
+[node name="ColorRect2" type="ColorRect" parent="SubViewportContainer/SubViewport" unique_id=2016873877]
+offset_right = 1159.0
+offset_bottom = 668.0
+color = Color(0, 0, 0, 1)
+
+[node name="Sprite2D" type="Sprite2D" parent="SubViewportContainer/SubViewport" unique_id=1482209268]
+material = SubResource("ShaderMaterial_bwqk1")
+position = Vector2(577.5, 321)
+texture = ExtResource("3_tu16r")
+
+[node name="TalkSprite" type="AnimatedSprite2D" parent="." unique_id=263670654]
+material = SubResource("ShaderMaterial_7r35v")
+sprite_frames = SubResource("SpriteFrames_m8aff")
+animation = &"none"
+frame_progress = 0.45103067
+centered = false
+script = ExtResource("6_eqpcq")
+palette_noise = SubResource("NoiseTexture2D_x4i3u")
+
+[node name="SubViewport" type="SubViewport" parent="TalkSprite" unique_id=1989815212]
+size = Vector2i(1152, 648)
+
+[node name="ColorRect2" type="ColorRect" parent="TalkSprite/SubViewport" unique_id=2141938140]
+offset_right = 1159.0
+offset_bottom = 668.0
+color = Color(0, 0, 0, 1)
+
+[node name="Sprite2D" type="Sprite2D" parent="TalkSprite/SubViewport" unique_id=1409515424]
+material = SubResource("ShaderMaterial_1h1pd")
+position = Vector2(585.00006, 338.00003)
+scale = Vector2(0.2090336, 0.16059758)
+texture = ExtResource("3_tu16r")
+
+[node name="DialogueManager" parent="." unique_id=458028754 node_paths=PackedStringArray("Background_Node", "portrait_node") instance=ExtResource("7_goc8q")]
+dialogue_path = "res://Week 1/W1D1.dlg"
+Characters = Array[ExtResource("8_8oygj")]([ExtResource("9_nbr5y"), ExtResource("10_4gvio"), ExtResource("11_c7wjt"), ExtResource("13_oyrc6"), ExtResource("14_2hkji"), ExtResource("15_saswf")])
+Backgrounds = Array[ExtResource("12_u01ec")]([ExtResource("13_xnfdn"), ExtResource("14_ibcgp")])
+Background_Node = NodePath("../SubViewportContainer/SubViewport/Sprite2D")
+portrait_node = NodePath("../TalkSprite")
+
+[node name="ColorRect" type="ColorRect" parent="." unique_id=989377327]
+material = SubResource("ShaderMaterial_ykvvg")
+offset_right = 1159.0
+offset_bottom = 668.0
+mouse_filter = 2
+
+[node name="Camera2D" type="Camera2D" parent="." unique_id=1726883717]
+anchor_mode = 0

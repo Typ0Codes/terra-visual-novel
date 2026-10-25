@@ -1,0 +1,24 @@
+[gd_resource type="Resource" script_class="DialogueCharacter" format=3 uid="uid://dnfoso5anhys6"]
+
+[ext_resource type="Texture2D" uid="uid://brv3jgq05vk1g" path="res://PFPs.png" id="1_rbp0x"]
+[ext_resource type="Script" uid="uid://bqoipkjny7xl3" path="res://Charachters/DialogueCharacter.gd" id="2_x3h85"]
+
+[sub_resource type="Gradient" id="Gradient_yv4uy"]
+colors = PackedColorArray(0, 0, 0, 1, 1, 0, 0.016666412, 1)
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_eqkw5"]
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_smshr"]
+noise = SubResource("FastNoiseLite_eqkw5")
+color_ramp = SubResource("Gradient_yv4uy")
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_eqkw5"]
+atlas = ExtResource("1_rbp0x")
+region = Rect2(320, 0, 160, 160)
+
+[resource]
+script = ExtResource("2_x3h85")
+character_name = "Ben"
+palette_noise = SubResource("NoiseTexture2D_smshr")
+portrait = SubResource("AtlasTexture_eqkw5")
+metadata/_custom_type_script = "uid://bqoipkjny7xl3"

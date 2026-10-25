@@ -1,6 +1,6 @@
 [gd_resource type="Resource" script_class="DialogueCharacter" format=3 uid="uid://cye0mdfgq56fh"]
 
-[ext_resource type="Script" uid="uid://bqoipkjny7xl3" path="res://DialogueCharacter.gd" id="1_4uicj"]
+[ext_resource type="Script" uid="uid://bqoipkjny7xl3" path="res://Charachters/DialogueCharacter.gd" id="1_4uicj"]
 [ext_resource type="Texture2D" uid="uid://brv3jgq05vk1g" path="res://PFPs.png" id="1_smshr"]
 
 [sub_resource type="Gradient" id="Gradient_yv4uy"]

@@ -1,19 +1,31 @@
 ~ start
-ivy: What do you say?
+ivy: What do you say? [bg=Railway]
 - TEST 1 => 1
 - TEST 2 => 2
 
 ~ 1
-ivy: Test 1
+ivy: [portrait=sad] Test 1
 => join
 
 ~ 2
-ivy: 2
+ivy: [portrait=sit] 2
 => join
 
 ~ join
-ivy: Rejoined
-- Leave => continue1
+ivy: [portrait=default] Rejoined
+ivy: should telltale test be true or false
+- GRU => [telltale=telltaletest,true]
+- GRALSE => [telltale=telltaletest,false]
+[if telltaletest false] => telltaletestfalse
+[if telltaletest true] => telltaletesttrue
+
+~ telltaletestfalse
+ivy: waow its false
+=> continue1
+
+~ telltaletesttrue
+ivy: waow its true
+=> continue1
 
 ~ continue1
-	[loadscene=res://NewDay.tscn]
+[loadscene=res://NewDay.tscn]

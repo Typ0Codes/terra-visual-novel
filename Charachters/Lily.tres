@@ -1,7 +1,7 @@
 [gd_resource type="Resource" script_class="DialogueCharacter" format=3 uid="uid://btu6eumexup4m"]
 
 [ext_resource type="Texture2D" uid="uid://brv3jgq05vk1g" path="res://PFPs.png" id="1_lstom"]
-[ext_resource type="Script" uid="uid://bqoipkjny7xl3" path="res://DialogueCharacter.gd" id="2_i1mjy"]
+[ext_resource type="Script" uid="uid://bqoipkjny7xl3" path="res://Charachters/DialogueCharacter.gd" id="2_i1mjy"]
 [ext_resource type="AudioStream" uid="uid://ced3i1a8vu2r" path="res://BARK FOR ME.wav" id="3_i1mjy"]
 
 [sub_resource type="Gradient" id="Gradient_5g4e4"]
