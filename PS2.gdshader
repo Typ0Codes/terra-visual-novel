@@ -1,7 +1,16 @@
 shader_type canvas_item;
+
 uniform sampler2D SCREEN_TEXTURE : hint_screen_texture, filter_nearest;
+
+// --- Gradient map ---
+uniform bool use_gradient_map = true;
+uniform bool flip = false;
+uniform sampler2D gradient : source_color, hint_default_black, filter_nearest, repeat_disable; // any palette you want
+uniform float gradient_mix : hint_range(0.0, 1.0) = 1.0;
+
+// --- PSX ---
 uniform int resolution_x = 320;
-uniform int resolution_y = 240; 
+uniform int resolution_y = 240;
 uniform int color_bit_depth = 4;
 uniform float dither_strength = 0.03;
 uniform float jitter_amount = 0.008;
@@ -10,61 +19,75 @@ uniform float jitter_frequency = 180.0;
 uniform float chromatic_aberration_strength : hint_range(0.0, 0.1) = 0.015;
 uniform float vignette_strength : hint_range(0.0, 1.0) = 0.8;
 uniform float vignette_radius : hint_range(0.0, 2.0) = 0.9;
+
+// --- Monitor bypass ---
 uniform vec2 monitor_pos = vec2(0.5, 0.5);
 uniform vec2 monitor_size = vec2(0.0, 0.0);
 uniform bool zoomed_in = false;
 
-
-float hash(vec2 p){
-    return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453123);
+float hash(vec2 p) {
+	return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453123);
 }
 
-vec2 psx_jitter(vec2 uv){
-    float t = floor(TIME * jitter_speed * 8.0) / 8.0;
-    float h_shake = hash(vec2(floor(uv.y * jitter_frequency), t)) - 0.5;
-    h_shake *= jitter_amount * 0.75;
-    float v_shake = hash(vec2(floor(uv.x * jitter_frequency * 0.4), t)) - 0.5;
-    v_shake *= jitter_amount * 0.35;
-    float micro = hash(uv * 600.0 + t) - 0.5;
-    micro *= jitter_amount * 0.1;
-    return uv + vec2(h_shake + micro, v_shake + micro);
+vec2 psx_jitter(vec2 uv) {
+	float t = floor(TIME * jitter_speed * 8.0) / 8.0;
+	float h_shake = hash(vec2(floor(uv.y * jitter_frequency), t)) - 0.5;
+	h_shake *= jitter_amount * 0.75;
+	float v_shake = hash(vec2(floor(uv.x * jitter_frequency * 0.4), t)) - 0.5;
+	v_shake *= jitter_amount * 0.35;
+	float micro = hash(uv * 600.0 + t) - 0.5;
+	micro *= jitter_amount * 0.1;
+	return uv + vec2(h_shake + micro, v_shake + micro);
 }
 
-void fragment(){
-    vec2 diff = abs(SCREEN_UV - monitor_pos);
-    bool in_monitor = zoomed_in && diff.x < monitor_size.x * 0.5 && diff.y < monitor_size.y * 0.5;
-    
-    if (in_monitor) {
-        COLOR = texture(SCREEN_TEXTURE, SCREEN_UV);
-    } else {
-        vec2 px = vec2(1.0 / float(resolution_x), 1.0 / float(resolution_y));
-        vec2 uv = floor(SCREEN_UV / px) * px + px * 0.5;
-        uv = psx_jitter(uv);
-        
-        vec3 col;
-        if(chromatic_aberration_strength > 0.001){
-            vec2 offset = (uv - 0.5) * chromatic_aberration_strength;
-            col.r = texture(SCREEN_TEXTURE, uv + offset).r;
-            col.g = texture(SCREEN_TEXTURE, uv).g;
-            col.b = texture(SCREEN_TEXTURE, uv - offset).b;
-        } else {
-            col = texture(SCREEN_TEXTURE, uv).rgb;
-        }
-        
-        float levels = pow(2.0, float(color_bit_depth));
-        col = floor(col * levels) / levels;
-        
-        if(vignette_strength > 0.0){
-            float dist = distance(SCREEN_UV, vec2(0.5));
-            float vignette = 1.0 - vignette_strength * smoothstep(vignette_radius * 0.5, vignette_radius, dist);
-            col *= vignette;
-        }
-        
-        if(dither_strength > 0.0){
-            float noise = hash(SCREEN_UV * 80.0 + floor(TIME * 50.0));
-            col += (noise - 0.5) * dither_strength;
-        }
-        
-        COLOR = vec4(col, 1.0);
-    }
+void fragment() {
+	vec2 diff = abs(SCREEN_UV - monitor_pos);
+	bool in_monitor = zoomed_in && diff.x < monitor_size.x * 0.5 && diff.y < monitor_size.y * 0.5;
+
+	if (in_monitor) {
+		COLOR = texture(SCREEN_TEXTURE, SCREEN_UV);
+	} else {
+		// Pixelate + jitter
+		vec2 px = vec2(1.0 / float(resolution_x), 1.0 / float(resolution_y));
+		vec2 uv = floor(SCREEN_UV / px) * px + px * 0.5;
+		uv = psx_jitter(uv);
+
+		// Chromatic aberration
+		vec3 col;
+		if (chromatic_aberration_strength > 0.001) {
+			vec2 offset = (uv - 0.5) * chromatic_aberration_strength;
+			col.r = texture(SCREEN_TEXTURE, uv + offset).r;
+			col.g = texture(SCREEN_TEXTURE, uv).g;
+			col.b = texture(SCREEN_TEXTURE, uv - offset).b;
+		} else {
+			col = texture(SCREEN_TEXTURE, uv).rgb;
+		}
+
+		// Color depth quantization
+		float levels = pow(2.0, float(color_bit_depth));
+		col = floor(col * levels) / levels;
+
+		// Gradient map (luminance -> palette)
+		if (use_gradient_map) {
+			float lum = dot(col, vec3(0.2126, 0.7152, 0.0722));
+			float t = clamp(abs(float(flip) - lum), 0.0, 1.0);
+			vec3 mapped = texture(gradient, vec2(t, 0.5)).rgb;
+			col = mix(col, mapped, gradient_mix);
+		}
+
+		// Vignette
+		if (vignette_strength > 0.0) {
+			float dist = distance(SCREEN_UV, vec2(0.5));
+			float vignette = 1.0 - vignette_strength * smoothstep(vignette_radius * 0.5, vignette_radius, dist);
+			col *= vignette;
+		}
+
+		// Dither / noise
+		if (dither_strength > 0.0) {
+			float noise = hash(SCREEN_UV * 80.0 + floor(TIME * 50.0));
+			col += (noise - 0.5) * dither_strength;
+		}
+
+		COLOR = vec4(col, 1.0);
+	}
 }

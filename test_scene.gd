@@ -15,7 +15,10 @@ func _on_speaker_changed(character: DialogueCharacter) -> void:
 		talk_sprite.palette_noise = character.palette_noise
 
 func _flash_effect() -> void:
+	$SubViewportContainer/SubViewport/ColorRect.visible = false
 	var mat := sprite.material as ShaderMaterial
 	mat.set_shader_parameter("effect_enabled", true)
 	await get_tree().create_timer(0.2).timeout
 	mat.set_shader_parameter("effect_enabled", false)
+	
+	$SubViewportContainer/SubViewport/ColorRect.visible = true

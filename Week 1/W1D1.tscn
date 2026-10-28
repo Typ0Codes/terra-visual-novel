@@ -4,6 +4,7 @@
 [ext_resource type="Shader" uid="uid://cgpbekhcs3afs" path="res://EarthBound.gdshader" id="2_ntgsm"]
 [ext_resource type="Texture2D" uid="uid://bg2ypj3idyevg" path="res://Overlooking Porthmeor (Makin Bacon).png" id="3_tu16r"]
 [ext_resource type="Shader" uid="uid://cx70xs0xndu50" path="res://Mask.gdshader" id="4_1ng0l"]
+[ext_resource type="Shader" uid="uid://bd58pt8hoxm1i" path="res://Week 1/Pallate.gdshader" id="4_ilvar"]
 [ext_resource type="Texture2D" uid="uid://wg5056b7pvl8" path="res://TalkSprites.png" id="5_fsd12"]
 [ext_resource type="Texture2D" uid="uid://cs3kg1rvmldyo" path="res://TalkSpritesNoOutline.png" id="6_1f84b"]
 [ext_resource type="Script" uid="uid://b7lk2h1v7x7s" path="res://talk_sprite.gd" id="6_eqpcq"]
@@ -19,6 +20,7 @@
 [ext_resource type="Resource" uid="uid://b731vf0h2yfdy" path="res://backgrounds/Railway.tres" id="14_ibcgp"]
 [ext_resource type="Shader" uid="uid://8g0ix82lntg1" path="res://PS2.gdshader" id="15_qjwcg"]
 [ext_resource type="Resource" uid="uid://c0851qc8awuby" path="res://Charachters/You.tres" id="15_saswf"]
+[ext_resource type="Texture2D" uid="uid://cgu8u26l7g3qd" path="res://inkpink-1x.png" id="20_7uu1b"]
 
 [sub_resource type="Gradient" id="Gradient_7r35v"]
 colors = PackedColorArray(0, 0, 0, 1, 1, 0, 0, 1)
@@ -46,6 +48,11 @@ shader_parameter/scrolling_speed = 0.08
 shader_parameter/enable_palette_cycling = true
 shader_parameter/palette = SubResource("NoiseTexture2D_fp5cc")
 shader_parameter/palette_speed = 0.1
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_7uu1b"]
+shader = ExtResource("4_ilvar")
+shader_parameter/flip = false
+shader_parameter/gradient = ExtResource("20_7uu1b")
 
 [sub_resource type="ViewportTexture" id="ViewportTexture_vrkw4"]
 viewport_path = NodePath("TalkSprite/SubViewport")
@@ -136,6 +143,10 @@ shader_parameter/palette_speed = 0.1
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_ykvvg"]
 shader = ExtResource("15_qjwcg")
+shader_parameter/use_gradient_map = false
+shader_parameter/flip = false
+shader_parameter/gradient = ExtResource("20_7uu1b")
+shader_parameter/gradient_mix = 1.0
 shader_parameter/resolution_x = 320
 shader_parameter/resolution_y = 240
 shader_parameter/color_bit_depth = 4
@@ -154,23 +165,36 @@ shader_parameter/zoomed_in = false
 script = ExtResource("1_vaphr")
 
 [node name="SubViewportContainer" type="SubViewportContainer" parent="." unique_id=1573621901]
-offset_right = 1163.0
+offset_left = -47.0
+offset_right = 1180.0
 offset_bottom = 662.0
 
 [node name="SubViewport" type="SubViewport" parent="SubViewportContainer" unique_id=132549110]
 handle_input_locally = false
-size = Vector2i(1152, 648)
+size = Vector2i(1227, 648)
 render_target_update_mode = 4
 
 [node name="ColorRect2" type="ColorRect" parent="SubViewportContainer/SubViewport" unique_id=2016873877]
-offset_right = 1159.0
-offset_bottom = 668.0
+offset_left = -149.0
+offset_top = -10.0
+offset_right = 1010.0
+offset_bottom = 658.0
+scale = Vector2(1.3200003, 1)
 color = Color(0, 0, 0, 1)
 
 [node name="Sprite2D" type="Sprite2D" parent="SubViewportContainer/SubViewport" unique_id=1482209268]
 material = SubResource("ShaderMaterial_bwqk1")
-position = Vector2(577.5, 321)
+position = Vector2(455, 323)
+scale = Vector2(1.16, 1.16)
 texture = ExtResource("3_tu16r")
+
+[node name="ColorRect" type="ColorRect" parent="SubViewportContainer/SubViewport" unique_id=1041245196]
+material = SubResource("ShaderMaterial_7uu1b")
+offset_left = -149.0
+offset_top = -10.0
+offset_right = 1021.0
+offset_bottom = 665.0
+scale = Vector2(1.3200003, 1)
 
 [node name="TalkSprite" type="AnimatedSprite2D" parent="." unique_id=263670654]
 material = SubResource("ShaderMaterial_7r35v")
@@ -204,8 +228,10 @@ portrait_node = NodePath("../TalkSprite")
 
 [node name="ColorRect" type="ColorRect" parent="." unique_id=989377327]
 material = SubResource("ShaderMaterial_ykvvg")
-offset_right = 1159.0
-offset_bottom = 668.0
+offset_left = -55.0
+offset_top = -23.0
+offset_right = 1191.0
+offset_bottom = 691.0
 mouse_filter = 2
 
 [node name="Camera2D" type="Camera2D" parent="." unique_id=1726883717]
